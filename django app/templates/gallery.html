@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+{% load static %}
+
+
+
+
+<html lang="en">
+<head>
+
+
+<style>
+.imp {
+  background-color: lightgrey;
+  width: 300px;
+  border: 15px dashed darkgrey;
+  padding: 50px;
+  margin: 20px;
+  position:absolute;
+  top:0;
+  right:50px;
+}
+
+.exemplo {
+    position:absolute;
+    top:600px;
+    right:50px;;
+}
+
+.pai{
+    position:relative;
+}
+
+
+
+</style>
+
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+</head>
+<body>
+<h2>INF 2102 - Projeto Final de Programacao - PUC Rio</h2>
+<br>
+<p>Aluno: Lauro Souza</p>
+<p>Matricula: 1912713</p>
+<p>Orientador: Waldemar Celes</p>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+<!--
+{% for image in images %}
+<img src='/static/{{image}}' width="480" height="270"/>
+{% endfor %}
+-->
+<img class="pai" src="" width="480" height="270" id="imageBox"/>
+{% csrf_token %}
+<br>
+
+<button type="button" id="send-my-url-to-django-button">Envia ondas</button>
+<button type="button" id="send-sem-ondas-button">Sem ondas</button>
+<p>Email:</p>
+<input type="text" id="email" name="email"><br><br>
+
+<section class="imp">
+<p>IMPORTANTE</p>
+    DEFINICAO:
+    <br>
+     ONDA -> Fronteira entre a espuma e a parede da onda
+    <br>
+    <p>INSTRUCOES</p>
+    - Clique em ate 3 ondas
+    <br>
+    - Clique exatamente na fronteira entre a espuma e a parade da onda
+    <br>
+    - Caso nao veja essa combinacao de espuma seguido de fronteira, significa que essa imagem esta sem ondas.
+    <br>
+    - Comece sempre pelas maiores e mais definidas ondas.
+    <br>
+    <br>
+    <br>
+    Veja o exemplo abaixo:
+</section>
+
+<img class="exemplo" src='/static/1590506248.53.jpg' width="480" height="270"/>
+
+<script>
+
+var coords= [];
+var coord=[]
+var count_coords = {};
+count_coords[1] = 0;
+count_coords[2] = 0;
+count_coords[3] = 0;
+var dados_envio=''
+var imgn=''
+console.log(coords)
+
+
+var email = document.getElementById('email').value
+console.log('email',email)
+
+
+$(document).ready(function() {
+    $("img").on("click", function(event) {
+        var x = event.pageX - this.offsetLeft;
+        var y = event.pageY - this.offsetTop;
+        if (coords.length==3){
+    	    alert("Limite estourado, refresh caso queira recomecar");
+    	}
+    	else{
+    	    coord[0]=x
+    	    coord[1]=y
+    	    coords[coords.length]= JSON.parse(JSON.stringify(coord));
+    	    count_coords[counter]=JSON.stringify(coords)
+    	    dados_envio = count_coords[counter]
+    	    console.log('dados_envio')
+    	    console.log(dados_envio)
+    	}
+    	console.log(coords.length)
+        console.log(coords)
+        //alert("X Coordinate: " + x + " Y Coordinate: " + y);
+
+        return coords
+    });
+
+
+});
+
+document.addEventListener('click', function(e) {
+    e = e || window.event;
+    var target = e.target;
+    if(target.tagName == 'IMG')
+        {
+        console.log(target.src);
+        imgn = JSON.parse(JSON.stringify(target.src));}
+        }, false);
+
+
+
+//le arquivo de imagens
+var mylist = {{list_json|safe}};
+
+//monta a lista de arquivos
+for(i = 0; i < mylist.length; i++){
+    mylist[i] = '/static/'+mylist[i];
+};
+
+
+console.log(document.getElementById('imageBox').src)
+console.log(mylist)
+
+//seleciona o 1o
+document.getElementById('imageBox').src = mylist[0]
+
+
+var imagem = ''
+
+//desenha boxes
+$(document).ready(function(){
+
+    $("img").click(function (ev) {
+        if($('div').length < 3) {
+            $("body").append(
+                $('<div></div>').css({
+                    position: 'absolute',
+                    top: ev.pageY + 'px',
+                    left: ev.pageX + 'px',
+                    width: '15px',
+                    height: '15px',
+                    background: '#000000'
+                })
+            );
+        }
+    });
+
+});
+
+
+//botao envia ondas
+
+
+$(document).ready(function() {
+    $("#send-my-url-to-django-button").click(function() {
+        email = document.getElementById('email').value
+        if (email=='')
+        {
+            alert('Coloque seu email')
+        } else{
+                if (dados_envio !=''){
+                    console.log(dados_envio)
+                    $.ajax({
+                        type: "POST",
+                        url: "{% url 'receive_coords' %}",
+                        data: {'email':email,'coords': (dados_envio),'file':imgn,'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                        dataType: "json",
+                        success: function(response) {
+                          if (response['response']=='ok sim'){
+                            //alert('dados enviados')
+                            dados_envio =''
+                            console.log('imagem enviada')
+                            console.log(imgn)
+                           }
+                    }
+
+                    })
+
+
+                } else{
+                    alert("Faltou clicar nas ondas")
+                }
+        }
+
+    })
+})
+
+//botao sem ondas
+$(document).ready(function() {
+    $("#send-sem-ondas-button").click(function() {
+        email = document.getElementById('email').value
+        if (email=='')
+        {
+            alert('Coloque seu email')
+        } else{
+            dados_envio=''
+            imagem = document.getElementById('imageBox').src
+            var imagem_str =  JSON.stringify(imagem)
+            console.log('imagem..')
+            console.log(imagem_str)
+            $.ajax({
+                type: "POST",
+                url: "{% url 'receive_coords' %}",
+                data: {'email':email,'coords': (dados_envio),'file': (imagem_str),'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                dataType: "json",
+                success: function(response) {
+                  change_img()
+                  console.log('enviando..')
+                  console.log(response)
+
+
+                }
+                  ////alert(response)
+            })
+        }
+    })
+})
+
+
+
+
+
+//seleciona o img depois de enviar com ondas button
+let counter = 1;
+document.querySelector("#send-my-url-to-django-button").addEventListener('click', function() {
+        if (coords.length>0){
+            document.getElementById('imageBox').src = mylist[counter];
+            $('div').remove();
+            if (counter==mylist.length-1){
+                counter = 0;
+            } else{
+                counter++;
+            }
+            coords= []
+            console.log(counter)
+        }
+
+
+    });
+
+
+
+function change_img(){
+      document.getElementById('imageBox').src = mylist[counter];
+        imagem = document.getElementById("imageBox").src;
+        $('div').remove();
+    	if (counter==mylist.length-1){
+    	    counter = 0;
+    	} else{
+    	    counter++;
+    	}
+        coords= []
+    	console.log(counter)
+}
+
+
+
+/*
+//seleciona o img depois de enviar sem ondas button
+document.querySelector('#send-sem-ondas-button').addEventListener('click', function() {
+        document.getElementById('imageBox').src = mylist[counter];
+        imagem = document.getElementById("imageBox").src;
+        $('div').remove();
+    	if (counter==2){
+    	    counter = 0;
+    	} else{
+    	    counter++;
+    	}
+        coords= []
+    	console.log(counter)
+
+    });
+
+*/
+
+</script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+</body>
+</html>

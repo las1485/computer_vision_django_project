@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PRO</title>
+<style>
+.right {
+  position: absolute;
+  right: 300px;
+  width: 300px;
+  padding: 10px;
+  top: 130px;
+}
+</style>
+</head>
+<body>
+<h2>INF 2102 - Projeto Final de Programacao - PUC Rio</h2>
+<p>Aluno: Lauro Souza</p>
+<p>Matricula: 1912713</p>
+<p>Orientador: Waldemar Celes</p>
+<br>
+<p>Data: <strong>{{ data }}</strong></p>
+<p>spot: <strong>{{ spot }}</strong></p>
+<p>waves_longer_20_meters: <strong>{{ surfaveis }}</strong></p>
+<p>left_waves_longer_20_meters: <strong>{{ esquerdas }}</strong></p>
+<p>right_waves_longer_20_meters: <strong>{{ direitas }}</strong></p>
+<p>waves_set_interval(minutes): <strong>{{ intervalo_series }}</strong></p>
+<p>waves_per_10min(min): <strong>{{ waves_per_10min }}</strong></p>
+<p>avg_wave_distance(m): <strong>{{ percurso_medio }}</strong></p>
+<p>avg_wave_duration(secs): <strong>{{ duracao_media }}</strong></p>
+<p>distance_outside(m): <strong>{{ diatancia_outside }}</strong></p>
+<br>
+<p>OBS: as linhas desenhadas no video representa o tracking das ondas mais recentes e mais longas</p>
+
+
+<!--
+{% for image in images %}
+<img src='/static/{{image}}' width="480" height="270"/>
+{% endfor %}
+-->
+
+
+
+<video class="right"  width="480" height="270" controls>
+  <source src="/static/{{video}}" type="video/mp4">
+</video>
+
+<!--
+
+<video class="right"  width="480" height="270" controls>
+  <source src='/static/waves/2020/06/09/h2641713.mp4' type="video/mp4">
+</video>
+-->
+
+<style>video {align: right} </style>
+
+
+</body>
+</html>
