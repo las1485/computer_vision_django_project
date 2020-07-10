@@ -8,7 +8,7 @@ Orientador: Waldemar Celes Filho
 Este trabalho é composto por 3 pastas.
 
 1 - Pasta "algoritmo" que contém o algoritmo de Detecção e Rastreamento das ondas, o algoritmo de conversao de geolocalizacao e o algoritmo de criação de estatísticas.
-2 - Pasta "django app" que contem o Django App e a RESTful API. Os arquivos que contem lógica são o django_app/views.py e django_app/template/gallery.html
+2 - Pasta "django app" que contem o Django App e a RESTful API. Os arquivos que contem lógica são o django_app/views.py e django_app/template/gallery.html. Os outros aqruivos do django app apenas contem configuracao.
 3 - O arquivo Projeto Final de Programacao.pdf contem a documentação do projeto.
   
 
