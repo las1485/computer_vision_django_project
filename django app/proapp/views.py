@@ -1,4 +1,23 @@
 # -*- coding: utf-8 -*-
+# Projeto final de Programacao
+# Autor: Lauro Henriko Garcia Alves de Souza.
+# Matricula: 1912713
+# Orientador: Waldemar Celes
+
+# ==============================================================================
+
+"""Funcoes para servir a web app.
+
+
+Este e o arquivo principal da web app e contem as funcoes que atendem ao REST,
+ a ferramenta de anotacao e a exibicao das estatiscas.
+ 
+ 
+"""
+
+# ==============================================================================
+
+
 from __future__ import unicode_literals
 from rest_framework import generics
 from .models import LastestStats
@@ -32,12 +51,17 @@ def index(request):
 
 # Create your views here.
 class StatsList(generics.ListCreateAPIView):
+    """Recebe as estatisticas do banco e transforma em REST"""
     queryset = LastestStats.objects.all().order_by('-id')[:1]
     serializer_class = StatsSerializer
 
 
 
 def home(request):
+    """Faz o parse no json da REST e pega o video da ultima hora
+    que o algoritmo rodou"""
+
+
     today = datetime.today()
     response = requests.get('http://165.227.87.19/prorest/?format=json')
     latest_stats = response.json()
@@ -80,6 +104,9 @@ def home(request):
 
 
 def gallery(request):
+    """Vai no servidor e retorna as imagens que o algoritmo
+    encontrou ondas e apresenta para o usario anotar"""
+
     year, month, day = map(str, time.strftime("%Y %m %d").split(' '))
     path='/home/django/pro/prosite/static/waves/' + year + '/' + month + '/' + day+'/'+'waves_original'+'/' # insert the path to your directory
     path2='waves/' + year + '/' + month + '/' + day+'/'+'waves_original'+'/'
@@ -96,6 +123,9 @@ def gallery(request):
 
 
 def receive_coords(request):
+    """ Recebe os dados da anotacao do usuario
+    e envia para o banco de dados"""
+
     if request.method == 'POST' and request.is_ajax():
         #print request.POST
         if 'coords' in request.POST:
