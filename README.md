@@ -1,4 +1,4 @@
-# projeto_final_prog
+# Computer Vision Django Project
 Trabalho para a matéria INF 2102 - Projeto Final de Programação
 Autor: Lauro Henriko Garcia Alves de Souza.
 Matricula: 1912713
